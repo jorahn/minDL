@@ -4,8 +4,36 @@ import mindl.data
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from torchvision import datasets
-from torchvision.transforms import ToTensor, Lambda
+
+import tensorflow as tf
+from tensorflow import keras
+
+BACKENDS = ['pytorch', 'tensorflow'] # TODO: add flax
+
+class Project(object):
+    def __init__(self, backend, device):
+        if not backend in BACKENDS:
+            raise ValueError(f'Invalid backend {backend}. Must be in {str(BACKENDS)}')
+        self.backend = backend
+        self.device = device
+    
+    def get_data(self, train_data, train_labels, test_data=None, test_labels=None, shuffle=True, batch_size=64)
+        if self.backend == 'pytorch':
+            train_dl = DataLoader(zip(train_data, train_labels), batch_size=batch_size)
+            if not test_data:
+                return train_dl
+            else:
+                test_dl = DataLoader(zip(test_data, test_labels), batch_size=batch_size)
+                return train_dl, test_dl
+        if self.backend == 'tensorflow':
+            train_ds = tf.data.Dataset.list_files(str(flowers_root/'*/*'))
+            if shuffle: train_ds = train_ds.shuffle()
+            if not test_data:
+                return train_ds.batch(batch_size)
+            else:
+                test_ds = tf.data.Dataset()
+                return test_ds.batch(batch_size)
+def make_data():
 
 def get_fashion_mnist():
     # Download training data from open datasets.
